@@ -1,0 +1,260 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\USER\\source\\repos\\Haven\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{A1A1A1A1-1111-1111-1111-111111111111}|API\\API.csproj|c:\\users\\user\\source\\repos\\haven\\api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A1A1A1A1-1111-1111-1111-111111111111}|API\\API.csproj|solutionrelative:api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A1A1A1A1-1111-1111-1111-111111111111}|API\\API.csproj|c:\\users\\user\\source\\repos\\haven\\api\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A1A1A1A1-1111-1111-1111-111111111111}|API\\API.csproj|solutionrelative:api\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A1A1A1A1-1111-1111-1111-111111111111}|API\\API.csproj|c:\\users\\user\\source\\repos\\haven\\api\\controllers\\groupcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A1A1A1A1-1111-1111-1111-111111111111}|API\\API.csproj|solutionrelative:api\\controllers\\groupcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\Microsoft.Common.CurrentVersion.targets||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A1A1A1A1-1111-1111-1111-111111111111}|API\\API.csproj|c:\\users\\user\\source\\repos\\haven\\api\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A1A1A1A1-1111-1111-1111-111111111111}|API\\API.csproj|solutionrelative:api\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A1A1A1A1-1111-1111-1111-111111111111}|API\\API.csproj|c:\\users\\user\\source\\repos\\haven\\api\\controllers\\geofencecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A1A1A1A1-1111-1111-1111-111111111111}|API\\API.csproj|solutionrelative:api\\controllers\\geofencecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B2B2B2B2-2222-2222-2222-222222222222}|Application\\Application.csproj|c:\\users\\user\\source\\repos\\haven\\application\\groupservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B2B2B2B2-2222-2222-2222-222222222222}|Application\\Application.csproj|solutionrelative:application\\groupservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D4D4D4D4-4444-4444-4444-444444444444}|Infrastructure\\Infrastructure.csproj|c:\\users\\user\\source\\repos\\haven\\infrastructure\\postgresgrouprepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D4D4D4D4-4444-4444-4444-444444444444}|Infrastructure\\Infrastructure.csproj|solutionrelative:infrastructure\\postgresgrouprepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A1A1A1A1-1111-1111-1111-111111111111}|API\\API.csproj|c:\\users\\user\\source\\repos\\haven\\api\\services\\authservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A1A1A1A1-1111-1111-1111-111111111111}|API\\API.csproj|solutionrelative:api\\services\\authservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A1A1A1A1-1111-1111-1111-111111111111}|API\\API.csproj|c:\\users\\user\\source\\repos\\haven\\api\\hubs\\grouphub.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A1A1A1A1-1111-1111-1111-111111111111}|API\\API.csproj|solutionrelative:api\\hubs\\grouphub.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A1A1A1A1-1111-1111-1111-111111111111}|API\\API.csproj|c:\\users\\user\\source\\repos\\haven\\api\\hubs\\locationhub.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A1A1A1A1-1111-1111-1111-111111111111}|API\\API.csproj|solutionrelative:api\\hubs\\locationhub.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A1A1A1A1-1111-1111-1111-111111111111}|API\\API.csproj|c:\\users\\user\\source\\repos\\haven\\api\\services\\geofenceservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A1A1A1A1-1111-1111-1111-111111111111}|API\\API.csproj|solutionrelative:api\\services\\geofenceservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 176,
+          "SelectedChildIndex": 15,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:129:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:131:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:133:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:135:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:137:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:139:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:130:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:134:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:136:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:138:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:132:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "GroupHub.cs",
+              "DocumentMoniker": "C:\\Users\\USER\\source\\repos\\Haven\\API\\Hubs\\GroupHub.cs",
+              "RelativeDocumentMoniker": "API\\Hubs\\GroupHub.cs",
+              "ToolTip": "C:\\Users\\USER\\source\\repos\\Haven\\API\\Hubs\\GroupHub.cs",
+              "RelativeToolTip": "API\\Hubs\\GroupHub.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAAAeAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-17T16:18:16.384Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "LocationHub.cs",
+              "DocumentMoniker": "C:\\Users\\USER\\source\\repos\\Haven\\API\\Hubs\\LocationHub.cs",
+              "RelativeDocumentMoniker": "API\\Hubs\\LocationHub.cs",
+              "ToolTip": "C:\\Users\\USER\\source\\repos\\Haven\\API\\Hubs\\LocationHub.cs",
+              "RelativeToolTip": "API\\Hubs\\LocationHub.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-17T16:18:14.91Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "GroupService.cs",
+              "DocumentMoniker": "C:\\Users\\USER\\source\\repos\\Haven\\Application\\GroupService.cs",
+              "RelativeDocumentMoniker": "Application\\GroupService.cs",
+              "ToolTip": "C:\\Users\\USER\\source\\repos\\Haven\\Application\\GroupService.cs",
+              "RelativeToolTip": "Application\\GroupService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-17T09:23:17.767Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\USER\\source\\repos\\Haven\\API\\Program.cs",
+              "RelativeDocumentMoniker": "API\\Program.cs",
+              "ToolTip": "C:\\Users\\USER\\source\\repos\\Haven\\API\\Program.cs",
+              "RelativeToolTip": "API\\Program.cs",
+              "ViewState": "AgIAAGYAAAAAAAAAAAAAABcAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-17T01:54:30.998Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "UserController.cs",
+              "DocumentMoniker": "C:\\Users\\USER\\source\\repos\\Haven\\API\\Controllers\\UserController.cs",
+              "RelativeDocumentMoniker": "API\\Controllers\\UserController.cs",
+              "ToolTip": "C:\\Users\\USER\\source\\repos\\Haven\\API\\Controllers\\UserController.cs",
+              "RelativeToolTip": "API\\Controllers\\UserController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAA3AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-18T12:54:45.395Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "GeofenceService.cs",
+              "DocumentMoniker": "C:\\Users\\USER\\source\\repos\\Haven\\API\\Services\\GeofenceService.cs",
+              "RelativeDocumentMoniker": "API\\Services\\GeofenceService.cs",
+              "ToolTip": "C:\\Users\\USER\\source\\repos\\Haven\\API\\Services\\GeofenceService.cs",
+              "RelativeToolTip": "API\\Services\\GeofenceService.cs",
+              "ViewState": "AgIAABsAAAAAAAAAAAAowAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-17T09:23:03.198Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "GeofenceController.cs",
+              "DocumentMoniker": "C:\\Users\\USER\\source\\repos\\Haven\\API\\Controllers\\GeofenceController.cs",
+              "RelativeDocumentMoniker": "API\\Controllers\\GeofenceController.cs",
+              "ToolTip": "C:\\Users\\USER\\source\\repos\\Haven\\API\\Controllers\\GeofenceController.cs",
+              "RelativeToolTip": "API\\Controllers\\GeofenceController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACoAAAA9AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-17T09:20:25.553Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "GroupController.cs",
+              "DocumentMoniker": "C:\\Users\\USER\\source\\repos\\Haven\\API\\Controllers\\GroupController.cs",
+              "RelativeDocumentMoniker": "API\\Controllers\\GroupController.cs",
+              "ToolTip": "C:\\Users\\USER\\source\\repos\\Haven\\API\\Controllers\\GroupController.cs",
+              "RelativeToolTip": "API\\Controllers\\GroupController.cs",
+              "ViewState": "AgIAAFwAAAAAAAAAAAAAAA0AAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-17T09:20:00.3Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "AuthController.cs",
+              "DocumentMoniker": "C:\\Users\\USER\\source\\repos\\Haven\\API\\Controllers\\AuthController.cs",
+              "RelativeDocumentMoniker": "API\\Controllers\\AuthController.cs",
+              "ToolTip": "C:\\Users\\USER\\source\\repos\\Haven\\API\\Controllers\\AuthController.cs",
+              "RelativeToolTip": "API\\Controllers\\AuthController.cs",
+              "ViewState": "AgIAAC8AAAAAAAAAAAAwwEYAAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-17T02:46:32.343Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Microsoft.Common.CurrentVersion.targets",
+              "DocumentMoniker": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\Microsoft.Common.CurrentVersion.targets",
+              "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\Microsoft.Common.CurrentVersion.targets",
+              "ToolTip": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\Microsoft.Common.CurrentVersion.targets",
+              "RelativeToolTip": "..\\..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\Microsoft.Common.CurrentVersion.targets",
+              "ViewState": "AgIAAPMUAAAAAAAAAAAIwAcVAAAHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003801|",
+              "WhenOpened": "2025-07-17T00:26:37.085Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "AuthService.cs",
+              "DocumentMoniker": "C:\\Users\\USER\\source\\repos\\Haven\\API\\Services\\AuthService.cs",
+              "RelativeDocumentMoniker": "API\\Services\\AuthService.cs",
+              "ToolTip": "C:\\Users\\USER\\source\\repos\\Haven\\API\\Services\\AuthService.cs",
+              "RelativeToolTip": "API\\Services\\AuthService.cs",
+              "ViewState": "AgIAAA4AAAAAAAAAAAAvwCYAAAAOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-17T22:19:30.45Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "PostgresGroupRepository.cs",
+              "DocumentMoniker": "C:\\Users\\USER\\source\\repos\\Haven\\Infrastructure\\PostgresGroupRepository.cs",
+              "RelativeDocumentMoniker": "Infrastructure\\PostgresGroupRepository.cs",
+              "ToolTip": "C:\\Users\\USER\\source\\repos\\Haven\\Infrastructure\\PostgresGroupRepository.cs",
+              "RelativeToolTip": "Infrastructure\\PostgresGroupRepository.cs",
+              "ViewState": "AgIAAD4BAAAAAAAAAAAjwFQBAABRAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-18T12:48:05.255Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
