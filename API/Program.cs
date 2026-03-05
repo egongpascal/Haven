@@ -1,8 +1,17 @@
 using AspNetCoreRateLimit;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Required when running behind a reverse proxy (e.g. Render, nginx)
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
 
 builder.Services.AddCors(p => p.AddPolicy("corsapp", builder =>
 {
@@ -126,19 +135,22 @@ builder.Services.AddControllers();
 
 
 var app = builder.Build();
+
+app.UseForwardedHeaders();
+
 app.UseCors("corsapp");
 app.UseIpRateLimiting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseHttpsRedirection();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+// Swagger in all environments for API discovery (restrict in production if needed)
+app.UseSwagger();
+app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Haven API v1"));
 
-
+// Root and health endpoints
+app.MapGet("/", () => Results.Ok(new { service = "Haven API", status = "running", docs = "/swagger" }));
+app.MapGet("/health", () => Results.Ok(new { status = "healthy" }));
 
 app.MapHub<Haven.API.Hubs.LocationHub>("/locationHub");
 app.MapControllers();
