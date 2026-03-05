@@ -7,7 +7,7 @@ using System.Security.Claims;
 namespace Haven.API.Controllers
 {
     [ApiController]
-    [Route("api/v1/users")]
+    [Route("api/users")]
     [Authorize] // Re-enabled for proper authentication
     public class UserController : ControllerBase
     {

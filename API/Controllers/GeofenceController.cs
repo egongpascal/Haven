@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Haven.API.Controllers
 {
     [ApiController]
-    [Route("api/v1/geofence")]
+    [Route("api/geofence")]
     [Authorize]
     public class GeofenceController : ControllerBase
     {

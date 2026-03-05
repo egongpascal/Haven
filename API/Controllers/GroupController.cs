@@ -7,7 +7,7 @@ using System.Security.Claims;
 namespace Haven.API.Controllers
 {
     [ApiController]
-    [Route("api/v1/groups")]
+    [Route("api/groups")]
     [Authorize]
     public class GroupController : ControllerBase
 

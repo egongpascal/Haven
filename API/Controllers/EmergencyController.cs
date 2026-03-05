@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Haven.API.Controllers
 {
     [ApiController]
-    [Route("api/v1/emergency")]
+    [Route("api/emergency")]
     public class EmergencyController : ControllerBase
     {
         private readonly IHubContext<EmergencyHub> _emergencyHubContext;
