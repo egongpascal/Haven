@@ -10,6 +10,8 @@ namespace Haven.Infrastructure
     {
         Task SaveEmergencyAsync(EmergencyRequest request);
         Task UpdateEmergencyStatusAsync(string id, string status);
+        Task<List<EmergencyRequest>> GetByGroupAsync(string groupId);
+        Task<EmergencyRequest> GetByIdAsync(string id);
     }
 
     public class EmergencyRepository : IEmergencyRepository
@@ -32,9 +34,22 @@ namespace Haven.Infrastructure
 
         public async Task UpdateEmergencyStatusAsync(string id, string status)
         {
-            var filter = MongoDB.Driver.Builders<EmergencyRequest>.Filter.Eq(e => e.Id, id);
-            var update = MongoDB.Driver.Builders<EmergencyRequest>.Update.Set(e => e.Status, status);
+            var filter = Builders<EmergencyRequest>.Filter.Eq(e => e.Id, id);
+            var update = Builders<EmergencyRequest>.Update.Set(e => e.Status, status);
             await _collection.UpdateOneAsync(filter, update);
+        }
+
+        public async Task<List<EmergencyRequest>> GetByGroupAsync(string groupId)
+        {
+            var filter = Builders<EmergencyRequest>.Filter.Eq(e => e.GroupId, groupId);
+            var sort = Builders<EmergencyRequest>.Sort.Descending(e => e.Timestamp);
+            return await _collection.Find(filter).Sort(sort).Limit(50).ToListAsync();
+        }
+
+        public async Task<EmergencyRequest> GetByIdAsync(string id)
+        {
+            var filter = Builders<EmergencyRequest>.Filter.Eq(e => e.Id, id);
+            return await _collection.Find(filter).FirstOrDefaultAsync();
         }
     }
 }
