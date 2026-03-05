@@ -62,8 +62,20 @@ var rabbitConnStr = builder.Configuration.GetConnectionString("RabbitMQ") ?? str
 builder.Services.AddSingleton<Haven.Infrastructure.IRabbitMQService>(sp => new Haven.Infrastructure.RabbitMQService(rabbitConnStr));
 var mongoConnStr = builder.Configuration.GetConnectionString("MongoLocations") ?? string.Empty;
 builder.Services.AddSingleton<Haven.Infrastructure.ILocationRepository>(sp => new Haven.Infrastructure.MongoLocationRepository(mongoConnStr));
+builder.Services.AddSingleton<Haven.Infrastructure.INotificationService, Haven.Infrastructure.NotificationService>();
 var groupConnStr = builder.Configuration.GetConnectionString("PostgresGroups") ?? string.Empty;
 builder.Services.AddSingleton<Haven.Infrastructure.IGroupRepository>(sp => new Haven.Infrastructure.PostgresGroupRepository(groupConnStr));
+
+// Emergency/SOS storage: use Postgres (same DB as groups) if configured, else MongoDB
+var emergencyStorage = builder.Configuration.GetValue<string>("EmergencyStorage") ?? "Postgres";
+if (emergencyStorage.Equals("Postgres", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrEmpty(groupConnStr))
+{
+    builder.Services.AddSingleton<Haven.Infrastructure.IEmergencyRepository>(sp => new Haven.Infrastructure.PostgresEmergencyRepository(groupConnStr));
+}
+else
+{
+    builder.Services.AddSingleton<Haven.Infrastructure.IEmergencyRepository>(sp => new Haven.Infrastructure.EmergencyRepository(mongoConnStr));
+}
 var userConnStr = builder.Configuration.GetConnectionString("PostgresUsers") ?? string.Empty;
 var roleConnStr = builder.Configuration.GetConnectionString("PostgresRoles") ?? string.Empty;
 builder.Services.AddSingleton<Haven.Infrastructure.IUserRepository>(sp => new Haven.Infrastructure.PostgresUserRepository(userConnStr));

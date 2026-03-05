@@ -16,11 +16,13 @@ namespace Haven.Infrastructure
             // TODO: Integrate with SMS/email providers (e.g., Twilio, SendGrid)
             // Example: Send SMS to emergency contacts
             // Example: Send email to group admin
+            await Task.CompletedTask;
         }
 
         public async Task SendEmergencyResolvedNotificationAsync(string emergencyId, ResolveEmergencyRequest request)
         {
             // TODO: Integrate with SMS/email providers for resolution notification
+            await Task.CompletedTask;
         }
     }
 }
