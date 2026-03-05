@@ -166,13 +166,19 @@ namespace Haven.Infrastructure
             return group;
         }
 
-        public async Task<bool> JoinGroupAsync(Guid groupId, Guid userId)
+        public async Task<bool> AddMemberAsync(Guid groupId, Guid userId, string role)
         {
             using var conn = new NpgsqlConnection(_connectionString);
             await conn.OpenAsync();
-            var cmd = new NpgsqlCommand("INSERT INTO group_members (group_id, user_id) VALUES (@group_id, @user_id)", conn);
-            cmd.Parameters.AddWithValue("group_id", groupId);
-            cmd.Parameters.AddWithValue("user_id", userId);
+            var cmd = new NpgsqlCommand(@"
+                INSERT INTO groupmembers (id, group_id, user_id, role, joined_at, is_active)
+                VALUES (@id, @groupId, @userId, @role, @joinedAt, @isActive)", conn);
+            cmd.Parameters.AddWithValue("id", Guid.NewGuid());
+            cmd.Parameters.AddWithValue("groupId", groupId);
+            cmd.Parameters.AddWithValue("userId", userId);
+            cmd.Parameters.AddWithValue("role", role);
+            cmd.Parameters.AddWithValue("joinedAt", DateTime.UtcNow);
+            cmd.Parameters.AddWithValue("isActive", true);
             try
             {
                 await cmd.ExecuteNonQueryAsync();
@@ -180,7 +186,7 @@ namespace Haven.Infrastructure
             }
             catch (NpgsqlException ex) when (ex.SqlState == "23505") // Unique violation
             {
-                return false; // User already a member of the group
+                return false;
             }
         }
 

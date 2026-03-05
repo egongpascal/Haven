@@ -28,9 +28,12 @@ namespace Haven.API.Controllers
         {
             var group = await _groupRepository.GetByIdAsync(groupId);
             if (group == null) return NotFound();
-            // Only allow group admin to set geofence
-            var userId = Guid.Parse(User.FindFirst("sub").Value);
-            if (group.CreatedBy != userId) return Forbid();
+            // Only allow group creator to set geofence
+            var userIdClaim = User.FindFirst("id")?.Value;
+            if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
+                return Unauthorized();
+            if (group.CreatedBy != userId)
+                return Forbid();
             // Store only radius in MongoDB; center is always creator's current location
             await _geofenceRepository.SetGeofenceAsync(groupId, request.RadiusMeters);
             return Ok();

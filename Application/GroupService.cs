@@ -29,7 +29,9 @@ namespace Haven.Application
                 IsActive = true,
                 InviteCode = inviteCode
             };
-            return await _groupRepository.CreateAsync(group);
+            group = await _groupRepository.CreateAsync(group);
+            await _groupRepository.AddMemberAsync(group.Id, request.CreatedBy, "Owner");
+            return group;
         }
 
         public async Task<Group> GetGroupByIdAsync(Guid id)

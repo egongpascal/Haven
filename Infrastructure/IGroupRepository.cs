@@ -10,6 +10,7 @@ namespace Haven.Infrastructure
         Task<Group> GetByInviteCodeAsync(string inviteCode);
         Task<Group> UpdateAsync(Group group);
         Task<bool> JoinGroupByInviteCodeAsync(JoinGroupRequest request);
+        Task<bool> AddMemberAsync(Guid groupId, Guid userId, string role);
         Task<List<GroupMemberWithUserDetails>> GetGroupMembersWithDetailsAsync(Guid groupId);
         Task<IEnumerable<Group>> GetAllAsync();
         Task<Group?> GetUserActiveGroupAsync(Guid userId);

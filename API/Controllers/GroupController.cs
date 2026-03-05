@@ -22,6 +22,10 @@ namespace Haven.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateGroupRequest request)
         {
+            var userIdClaim = User.FindFirst("id")?.Value;
+            if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
+                return Unauthorized();
+            request.CreatedBy = userId;
             var group = await _groupService.CreateGroupAsync(request);
             return Ok(group);
         }
@@ -60,6 +64,10 @@ namespace Haven.API.Controllers
         [HttpPost("join")]
         public async Task<IActionResult> JoinGroup([FromBody] JoinGroupRequest request)
         {
+            var userIdClaim = User.FindFirst("id")?.Value;
+            if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
+                return Unauthorized();
+            request.UserId = userId;
             var result = await _groupService.JoinGroupByInviteCodeAsync(request);
             if (!result)
                 return BadRequest("Could not join group. Invite code may be invalid or user already a member.");
