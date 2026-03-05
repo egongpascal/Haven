@@ -12,9 +12,12 @@ COPY Infrastructure/Infrastructure.csproj Infrastructure/
 # Restore
 RUN dotnet restore
 
-# Copy source and publish
+# Copy source (exclude obj/bin via .dockerignore - they contain host-specific NuGet paths)
 COPY . .
-RUN dotnet publish API/API.csproj -c Release -o /app/publish --no-restore
+# Remove any obj/bin that may have been copied (Windows NuGet cache references break Linux build)
+RUN rm -rf API/obj API/bin Application/obj Application/bin Domain/obj Domain/bin Infrastructure/obj Infrastructure/bin
+# Restore and publish (full restore to avoid stale asset resolution)
+RUN dotnet publish API/API.csproj -c Release -o /app/publish
 
 # Runtime
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
