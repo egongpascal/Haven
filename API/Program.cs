@@ -76,6 +76,10 @@ else
 {
     builder.Services.AddSingleton<Haven.Infrastructure.IEmergencyRepository>(sp => new Haven.Infrastructure.EmergencyRepository(mongoConnStr));
 }
+builder.Services.AddSingleton<Haven.Infrastructure.IMusterPointRepository>(sp =>
+    !string.IsNullOrEmpty(groupConnStr)
+        ? new Haven.Infrastructure.PostgresMusterPointRepository(groupConnStr)
+        : new Haven.Infrastructure.InMemoryMusterPointRepository());
 var userConnStr = builder.Configuration.GetConnectionString("PostgresUsers") ?? string.Empty;
 var roleConnStr = builder.Configuration.GetConnectionString("PostgresRoles") ?? string.Empty;
 builder.Services.AddSingleton<Haven.Infrastructure.IUserRepository>(sp => new Haven.Infrastructure.PostgresUserRepository(userConnStr));

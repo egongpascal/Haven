@@ -16,12 +16,18 @@ namespace Haven.API.Controllers
     {
         private readonly IHubContext<EmergencyHub> _emergencyHubContext;
         private readonly IEmergencyRepository _emergencyRepository;
+        private readonly IMusterPointRepository _musterPointRepository;
         private readonly INotificationService _notificationService;
 
-        public EmergencyController(IHubContext<EmergencyHub> emergencyHubContext, IEmergencyRepository emergencyRepository, INotificationService notificationService)
+        public EmergencyController(
+            IHubContext<EmergencyHub> emergencyHubContext,
+            IEmergencyRepository emergencyRepository,
+            IMusterPointRepository musterPointRepository,
+            INotificationService notificationService)
         {
             _emergencyHubContext = emergencyHubContext;
             _emergencyRepository = emergencyRepository;
+            _musterPointRepository = musterPointRepository;
             _notificationService = notificationService;
         }
 
@@ -101,6 +107,67 @@ namespace Haven.API.Controllers
             await _emergencyHubContext.Clients.Group(request.GroupId)
                 .SendAsync("SOSResolved", id);
             return Ok(new { Message = "Emergency resolved, persisted, and notifications sent." });
+        }
+
+        [HttpPost("incidents/{incidentId}/muster-point")]
+        public async Task<IActionResult> CreateMusterPoint(string incidentId, [FromBody] CreateMusterPointRequest request)
+        {
+            var userIdClaim = User.FindFirst("id")?.Value;
+            if (string.IsNullOrEmpty(userIdClaim)) return Unauthorized();
+            var incident = await _emergencyRepository.GetByIdAsync(incidentId);
+            if (incident == null) return NotFound("Incident not found");
+            var mp = new Haven.Domain.DTO.MusterPointRequest
+            {
+                Id = Guid.NewGuid().ToString(),
+                IncidentId = incidentId,
+                Name = request.Name,
+                Latitude = request.Latitude,
+                Longitude = request.Longitude,
+                RadiusMetres = request.RadiusMetres,
+                CreatedBy = userIdClaim,
+                CreatedAt = DateTime.UtcNow,
+                ResolvedAt = null,
+                TotalMembers = request.TotalMembers,
+                ArrivedCount = 0,
+            };
+            await _musterPointRepository.SaveMusterPointAsync(mp);
+            return Ok(new
+            {
+                id = mp.Id,
+                incidentId = mp.IncidentId,
+                name = mp.Name,
+                latitude = mp.Latitude,
+                longitude = mp.Longitude,
+                radiusMetres = mp.RadiusMetres,
+                createdBy = mp.CreatedBy,
+                createdAt = mp.CreatedAt,
+                resolvedAt = (DateTime?)null,
+                totalMembers = mp.TotalMembers,
+                arrivedCount = mp.ArrivedCount,
+                isComplete = false,
+            });
+        }
+
+        [HttpGet("incidents/{incidentId}/muster-point")]
+        public async Task<IActionResult> GetMusterPoint(string incidentId)
+        {
+            var mp = await _musterPointRepository.GetByIncidentIdAsync(incidentId);
+            if (mp == null) return NotFound();
+            return Ok(new
+            {
+                id = mp.Id,
+                incidentId = mp.IncidentId,
+                name = mp.Name,
+                latitude = mp.Latitude,
+                longitude = mp.Longitude,
+                radiusMetres = mp.RadiusMetres,
+                createdBy = mp.CreatedBy,
+                createdAt = mp.CreatedAt,
+                resolvedAt = mp.ResolvedAt,
+                totalMembers = mp.TotalMembers,
+                arrivedCount = mp.ArrivedCount,
+                isComplete = mp.ArrivedCount >= mp.TotalMembers && mp.TotalMembers > 0,
+            });
         }
 
     }

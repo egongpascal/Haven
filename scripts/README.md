@@ -12,13 +12,19 @@
 - Connection string: `MongoLocations` in appsettings.json
 - No table creation required
 
-## Running the emergencies script
+## Running the scripts
+
+### 1. Emergencies (SOS incidents)
 
 ```bash
 # From project root, against your Postgres DB (same as groups)
 psql "Host=your-host;Port=5432;Database=haven_0ipb;Username=your-user;Password=your-pass" -f scripts/001_create_emergencies_table.sql
 ```
 
+### 2. Muster points
+```bash
+psql "<connection-string>" -f scripts/002_create_muster_points_table.sql
+```
 Or use a GUI (pgAdmin, DBeaver) to run the SQL file against your database.
 
 ## Schema reference (Postgres)
