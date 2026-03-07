@@ -16,17 +16,20 @@ namespace Haven.API.Controllers
     {
         private readonly IGroupService _groupService;
         private readonly IHubContext<GroupHub> _groupHubContext;
+        private readonly IHubContext<NotificationHub> _notificationHubContext;
         private readonly IGroupRepository _groupRepository;
         private readonly IUserRepository _userRepository;
 
         public GroupController(
             IGroupService groupService,
             IHubContext<GroupHub> groupHubContext,
+            IHubContext<NotificationHub> notificationHubContext,
             IGroupRepository groupRepository,
             IUserRepository userRepository)
         {
             _groupService = groupService;
             _groupHubContext = groupHubContext;
+            _notificationHubContext = notificationHubContext;
             _groupRepository = groupRepository;
             _userRepository = userRepository;
         }
@@ -90,7 +93,7 @@ namespace Haven.API.Controllers
             if (!result)
                 return BadRequest("Could not join group. Invite code may be invalid or user already a member.");
 
-            // Broadcast MemberJoined with full payload expected by the frontend
+            // Broadcast MemberJoined + NotificationReceived to the group
             try
             {
                 var group = await _groupService.GetGroupByInviteCodeAsync(request.InviteCode);
@@ -99,14 +102,29 @@ namespace Haven.API.Controllers
                 {
                     var displayName = $"{user.FirstName} {user.LastName}".Trim();
                     if (string.IsNullOrEmpty(displayName)) displayName = user.Username;
+                    var groupIdStr = group.Id.ToString();
 
-                    await _groupHubContext.Clients.Group(group.Id.ToString())
+                    await _groupHubContext.Clients.Group(groupIdStr)
                         .SendAsync("MemberJoined", new
                         {
-                            groupId = group.Id.ToString(),
+                            groupId = groupIdStr,
                             userId = userId.ToString(),
                             displayName,
                             role = "Member"
+                        });
+
+                    await _notificationHubContext.Clients.Group(groupIdStr)
+                        .SendAsync("NotificationReceived", new
+                        {
+                            id = Guid.NewGuid().ToString(),
+                            type = "MemberJoined",
+                            title = "New member joined",
+                            body = $"{displayName} has joined {group.Name}",
+                            data = new { groupId = groupIdStr, userId = userId.ToString() },
+                            channel = "InApp",
+                            sentAt = DateTime.UtcNow.ToString("o"),
+                            readAt = (string?)null,
+                            isRead = false
                         });
                 }
             }
@@ -124,12 +142,38 @@ namespace Haven.API.Controllers
 
             await _groupRepository.RemoveMemberAsync(id, userId);
 
-            await _groupHubContext.Clients.Group(id.ToString())
-                .SendAsync("MemberLeft", new
+            string groupIdStr = id.ToString();
+            string userIdStr = userId.ToString();
+
+            await _groupHubContext.Clients.Group(groupIdStr)
+                .SendAsync("MemberLeft", new { groupId = groupIdStr, userId = userIdStr });
+
+            // Notify remaining members via NotificationHub
+            try
+            {
+                var leavingUser = await _userRepository.GetByIdAsync(userId);
+                var group = await _groupRepository.GetByIdAsync(id);
+                if (leavingUser != null && group != null)
                 {
-                    groupId = id.ToString(),
-                    userId = userId.ToString()
-                });
+                    var displayName = $"{leavingUser.FirstName} {leavingUser.LastName}".Trim();
+                    if (string.IsNullOrEmpty(displayName)) displayName = leavingUser.Username;
+
+                    await _notificationHubContext.Clients.Group(groupIdStr)
+                        .SendAsync("NotificationReceived", new
+                        {
+                            id = Guid.NewGuid().ToString(),
+                            type = "MemberJoined",
+                            title = "Member left",
+                            body = $"{displayName} has left {group.Name}",
+                            data = new { groupId = groupIdStr, userId = userIdStr },
+                            channel = "InApp",
+                            sentAt = DateTime.UtcNow.ToString("o"),
+                            readAt = (string?)null,
+                            isRead = false
+                        });
+                }
+            }
+            catch { /* non-critical */ }
 
             return Ok(new { Message = "Left group successfully." });
         }

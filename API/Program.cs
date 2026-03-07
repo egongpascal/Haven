@@ -81,6 +81,8 @@ builder.Services.AddSingleton<Haven.Infrastructure.IMusterPointRepository>(sp =>
 var userConnStr = builder.Configuration.GetConnectionString("PostgresUsers") ?? string.Empty;
 builder.Services.AddSingleton<Haven.Infrastructure.IUserRepository>(sp => new Haven.Infrastructure.PostgresUserRepository(userConnStr));
 builder.Services.AddSingleton<Haven.Application.IGroupService, Haven.Application.GroupService>();
+// GeofenceService is injected into LocationHub — must be registered so DI can construct the hub
+builder.Services.AddSingleton<Haven.API.Services.GeofenceService>();
 builder.Services.AddSingleton<Haven.Application.IUserService>(sp =>
     new Haven.Application.UserService(
         sp.GetRequiredService<Haven.Infrastructure.IUserRepository>()
