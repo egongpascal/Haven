@@ -1,65 +1,76 @@
 using Haven.Domain.Models;
-using Microsoft.AspNetCore.SignalR;
 using Haven.API.Hubs;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.SignalR;
 using Haven.Infrastructure;
 
 namespace Haven.API.Services
 {
     public class GeofenceService
     {
-        private readonly IHubContext<LocationHub> _locationHubContext;
+        private readonly IHubContext<GeofenceHub> _geofenceHubContext;
         private readonly ILocationRepository _locationRepository;
         private readonly IGroupRepository _groupRepository;
+        private readonly IUserRepository _userRepository;
 
-        public GeofenceService(IHubContext<LocationHub> locationHubContext, ILocationRepository locationRepository, IGroupRepository groupRepository)
+        public GeofenceService(
+            IHubContext<GeofenceHub> geofenceHubContext,
+            ILocationRepository locationRepository,
+            IGroupRepository groupRepository,
+            IUserRepository userRepository)
         {
-            _locationHubContext = locationHubContext;
+            _geofenceHubContext = geofenceHubContext;
             _locationRepository = locationRepository;
             _groupRepository = groupRepository;
+            _userRepository = userRepository;
         }
 
-        // Checks a single member's location against the creator's current location and radius
-        // NOTE: memberLat/memberLng and creatorLat/creatorLng should be fetched from MongoDB
         public async Task CheckMemberGeofenceBreach(Guid groupId, Guid memberId)
         {
-            // Get group info (including creatorId and geofence radius)
             var group = await _groupRepository.GetByIdAsync(groupId);
             if (group == null) return;
 
             var creatorId = group.CreatedBy;
             var radiusMeters = group.GeofenceRadius;
 
-            // Get latest locations from MongoDB
             var memberLocation = await _locationRepository.GetLatestLocationAsync(memberId);
             var creatorLocation = await _locationRepository.GetLatestLocationAsync(creatorId);
 
             if (memberLocation == null || creatorLocation == null) return;
 
-            double memberLat = memberLocation.Latitude;
-            double memberLng = memberLocation.Longitude;
-            double creatorLat = creatorLocation.Latitude;
-            double creatorLng = creatorLocation.Longitude;
+            double distance = GetDistanceMeters(
+                creatorLocation.Latitude, creatorLocation.Longitude,
+                memberLocation.Latitude, memberLocation.Longitude);
 
-            double distance = GetDistanceMeters(creatorLat, creatorLng, memberLat, memberLng);
             if (distance > radiusMeters)
             {
-                // Member breached geofence, send alert via SignalR
-                await _locationHubContext.Clients.Group(groupId.ToString())
-                    .SendAsync("GeofenceBreached", new {
-                        UserId = memberId,
-                        Distance = distance,
-                        Radius = radiusMeters
+                string displayName = memberId.ToString();
+                try
+                {
+                    var member = await _userRepository.GetByIdAsync(memberId);
+                    if (member != null)
+                    {
+                        var name = $"{member.FirstName} {member.LastName}".Trim();
+                        displayName = string.IsNullOrEmpty(name) ? member.Username : name;
+                    }
+                }
+                catch { /* fall back to userId string */ }
+
+                // Send GeofenceCrossing with the shape the frontend expects
+                await _geofenceHubContext.Clients.Group(groupId.ToString())
+                    .SendAsync("GeofenceCrossing", new
+                    {
+                        geofenceId = $"geofence-{groupId}",
+                        userId = memberId.ToString(),
+                        displayName,
+                        eventType = "Exit",
+                        timestamp = DateTime.UtcNow.ToString("o")
                     });
             }
         }
 
-        // Haversine formula for distance between two lat/lng points
         private double GetDistanceMeters(double lat1, double lng1, double lat2, double lng2)
         {
-            var R = 6371000; // Earth radius in meters
+            const double R = 6371000;
             var dLat = ToRadians(lat2 - lat1);
             var dLng = ToRadians(lng2 - lng1);
             var a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +

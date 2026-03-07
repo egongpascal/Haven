@@ -1,18 +1,12 @@
 using Microsoft.AspNetCore.SignalR;
+using System.Threading.Tasks;
 
 namespace Haven.API.Hubs
 {
     public class GroupHub : Hub
     {
-        public async Task NotifyMemberJoined(string groupId, string userId)
-        {
-            await Clients.Group(groupId).SendAsync("MemberJoined", userId);
-        }
-
-        public async Task NotifyGroupUpdated(string groupId)
-        {
-            await Clients.Group(groupId).SendAsync("GroupUpdated", groupId);
-        }
+        // Group-scoped events are sent from controllers via IHubContext<GroupHub>.
+        // Clients invoke JoinGroup/LeaveGroup to subscribe to group-scoped events.
 
         public async Task JoinGroup(string groupId)
         {

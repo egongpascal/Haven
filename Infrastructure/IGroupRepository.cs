@@ -15,5 +15,6 @@ namespace Haven.Infrastructure
         Task<IEnumerable<Group>> GetAllAsync();
         Task<Group?> GetUserActiveGroupAsync(Guid userId);
         Task<List<Group>> GetUserGroupsAsync(Guid userId);
+        Task RemoveMemberAsync(Guid groupId, Guid userId);
     }
 }

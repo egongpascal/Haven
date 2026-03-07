@@ -1,7 +1,10 @@
+using Haven.API.Hubs;
 using Haven.Application;
 using Haven.Domain.DTO;
+using Haven.Infrastructure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using System.Security.Claims;
 
 namespace Haven.API.Controllers
@@ -10,13 +13,22 @@ namespace Haven.API.Controllers
     [Route("api/groups")]
     [Authorize]
     public class GroupController : ControllerBase
-
     {
         private readonly IGroupService _groupService;
+        private readonly IHubContext<GroupHub> _groupHubContext;
+        private readonly IGroupRepository _groupRepository;
+        private readonly IUserRepository _userRepository;
 
-        public GroupController(IGroupService groupService)
+        public GroupController(
+            IGroupService groupService,
+            IHubContext<GroupHub> groupHubContext,
+            IGroupRepository groupRepository,
+            IUserRepository userRepository)
         {
             _groupService = groupService;
+            _groupHubContext = groupHubContext;
+            _groupRepository = groupRepository;
+            _userRepository = userRepository;
         }
 
         [HttpPost]
@@ -29,6 +41,7 @@ namespace Haven.API.Controllers
             var group = await _groupService.CreateGroupAsync(request);
             return Ok(group);
         }
+
         [HttpGet("by-invite/{inviteCode}")]
         public async Task<IActionResult> GetByInviteCode(string inviteCode)
         {
@@ -58,6 +71,11 @@ namespace Haven.API.Controllers
         {
             var group = await _groupService.UpdateGroupAsync(id, request.Name);
             if (group == null) return NotFound();
+
+            // Notify group members that the group metadata changed
+            await _groupHubContext.Clients.Group(id.ToString())
+                .SendAsync("GroupUpdated", new { groupId = id.ToString() });
+
             return Ok(group);
         }
 
@@ -71,7 +89,49 @@ namespace Haven.API.Controllers
             var result = await _groupService.JoinGroupByInviteCodeAsync(request);
             if (!result)
                 return BadRequest("Could not join group. Invite code may be invalid or user already a member.");
+
+            // Broadcast MemberJoined with full payload expected by the frontend
+            try
+            {
+                var group = await _groupService.GetGroupByInviteCodeAsync(request.InviteCode);
+                var user = await _userRepository.GetByIdAsync(userId);
+                if (group != null && user != null)
+                {
+                    var displayName = $"{user.FirstName} {user.LastName}".Trim();
+                    if (string.IsNullOrEmpty(displayName)) displayName = user.Username;
+
+                    await _groupHubContext.Clients.Group(group.Id.ToString())
+                        .SendAsync("MemberJoined", new
+                        {
+                            groupId = group.Id.ToString(),
+                            userId = userId.ToString(),
+                            displayName,
+                            role = "Member"
+                        });
+                }
+            }
+            catch { /* non-critical */ }
+
             return Ok(new { Message = "Joined group successfully." });
+        }
+
+        [HttpPost("{id}/leave")]
+        public async Task<IActionResult> LeaveGroup(Guid id)
+        {
+            var userIdClaim = User.FindFirst("id")?.Value;
+            if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
+                return Unauthorized();
+
+            await _groupRepository.RemoveMemberAsync(id, userId);
+
+            await _groupHubContext.Clients.Group(id.ToString())
+                .SendAsync("MemberLeft", new
+                {
+                    groupId = id.ToString(),
+                    userId = userId.ToString()
+                });
+
+            return Ok(new { Message = "Left group successfully." });
         }
 
         [HttpGet("{id}/members")]

@@ -320,6 +320,18 @@ namespace Haven.Infrastructure
             return result;
         }  
 
+        public async Task RemoveMemberAsync(Guid groupId, Guid userId)
+        {
+            using var conn = new NpgsqlConnection(_connectionString);
+            await conn.OpenAsync();
+            var cmd = new NpgsqlCommand(@"
+                UPDATE groupmembers SET is_active = FALSE
+                WHERE group_id = @groupId AND user_id = @userId", conn);
+            cmd.Parameters.AddWithValue("groupId", groupId);
+            cmd.Parameters.AddWithValue("userId", userId);
+            await cmd.ExecuteNonQueryAsync();
+        }
+
         public async Task<IEnumerable<Group>> GetGroupsByUserIdAsync(Guid userId)
         {
             var groups = new List<Group>();

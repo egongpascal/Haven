@@ -71,5 +71,19 @@ namespace Haven.Infrastructure
             }
             return null;
         }
+
+        public async Task ResolveMusterPointAsync(string incidentId)
+        {
+            using var conn = new NpgsqlConnection(_connectionString);
+            await conn.OpenAsync();
+
+            var cmd = new NpgsqlCommand(@"
+                UPDATE muster_points
+                SET resolved_at = NOW()
+                WHERE incident_id = @incidentId AND resolved_at IS NULL",
+                conn);
+            cmd.Parameters.AddWithValue("incidentId", incidentId);
+            await cmd.ExecuteNonQueryAsync();
+        }
     }
 }

@@ -31,6 +31,8 @@ namespace Haven.API.Controllers
             _notificationService = notificationService;
         }
 
+        // ─── SOS ─────────────────────────────────────────────────────────────────
+
         [HttpPost]
         public async Task<IActionResult> TriggerSOS([FromBody] EmergencyRequest request)
         {
@@ -40,27 +42,28 @@ namespace Haven.API.Controllers
             request.UserId = userIdClaim;
             request.Id = Guid.NewGuid().ToString();
             request.EmergencyType = request.EmergencyType ?? "SOS";
-            // Save emergency to database
+            request.Timestamp = request.Timestamp == default ? DateTime.UtcNow : request.Timestamp;
+            request.Status = "Active";
+
             await _emergencyRepository.SaveEmergencyAsync(request);
-            // Send notifications (SMS/email)
             await _notificationService.SendEmergencyNotificationAsync(request);
-            await _emergencyHubContext.Clients.Group(request.GroupId)
-                .SendAsync("SOSAlert", new {
-                    UserId = request.UserId,
-                    Latitude = request.Latitude,
-                    Longitude = request.Longitude,
-                    EmergencyType = request.EmergencyType
-                });
-            return Ok(new
+
+            var incident = new
             {
                 id = request.Id,
-                type = request.EmergencyType ?? "SOS",
+                type = request.EmergencyType,
                 triggeredBy = request.UserId,
                 groupId = request.GroupId,
                 startedAt = request.Timestamp,
                 resolvedAt = (DateTime?)null,
                 status = request.Status,
-            });
+            };
+
+            // SOSTriggered — matches frontend HubEvents.SOSTriggered(incident: Incident)
+            await _emergencyHubContext.Clients.Group(request.GroupId)
+                .SendAsync("SOSTriggered", incident);
+
+            return Ok(incident);
         }
 
         [HttpGet("incidents/group/{groupId}")]
@@ -97,26 +100,38 @@ namespace Haven.API.Controllers
             });
         }
 
-        [HttpPost("{id}/resolve")]
+        // Route: POST /api/emergency/incidents/{id}/resolve
+        // Matches what the frontend calls: client.post(`/api/emergency/incidents/${incidentId}/resolve`)
+        [HttpPost("incidents/{id}/resolve")]
         public async Task<IActionResult> ResolveSOS(string id, [FromBody] ResolveEmergencyRequest request)
         {
-            // Update emergency status in database
             await _emergencyRepository.UpdateEmergencyStatusAsync(id, "Resolved");
-            // Send notifications (SMS/email)
+            await _musterPointRepository.ResolveMusterPointAsync(id);
             await _notificationService.SendEmergencyResolvedNotificationAsync(id, request);
+
+            // SOSResolved — matches frontend HubEvents.SOSResolved({ incidentId })
             await _emergencyHubContext.Clients.Group(request.GroupId)
-                .SendAsync("SOSResolved", id);
-            return Ok(new { Message = "Emergency resolved, persisted, and notifications sent." });
+                .SendAsync("SOSResolved", new { incidentId = id });
+
+            // Also clear the muster point overlay on all clients
+            await _emergencyHubContext.Clients.Group(request.GroupId)
+                .SendAsync("MusterPointResolved", new { incidentId = id });
+
+            return Ok(new { Message = "Emergency resolved." });
         }
+
+        // ─── Muster Points ────────────────────────────────────────────────────────
 
         [HttpPost("incidents/{incidentId}/muster-point")]
         public async Task<IActionResult> CreateMusterPoint(string incidentId, [FromBody] CreateMusterPointRequest request)
         {
             var userIdClaim = User.FindFirst("id")?.Value;
             if (string.IsNullOrEmpty(userIdClaim)) return Unauthorized();
+
             var incident = await _emergencyRepository.GetByIdAsync(incidentId);
             if (incident == null) return NotFound("Incident not found");
-            var mp = new Haven.Domain.DTO.MusterPointRequest
+
+            var mp = new MusterPointRequest
             {
                 Id = Guid.NewGuid().ToString(),
                 IncidentId = incidentId,
@@ -131,7 +146,8 @@ namespace Haven.API.Controllers
                 ArrivedCount = 0,
             };
             await _musterPointRepository.SaveMusterPointAsync(mp);
-            return Ok(new
+
+            var mpResponse = new
             {
                 id = mp.Id,
                 incidentId = mp.IncidentId,
@@ -145,7 +161,13 @@ namespace Haven.API.Controllers
                 totalMembers = mp.TotalMembers,
                 arrivedCount = mp.ArrivedCount,
                 isComplete = false,
-            });
+            };
+
+            // MusterPointSet — matches frontend HubEvents.MusterPointSet(musterPoint: MusterPoint)
+            await _emergencyHubContext.Clients.Group(incident.GroupId)
+                .SendAsync("MusterPointSet", mpResponse);
+
+            return Ok(mpResponse);
         }
 
         [HttpGet("incidents/{incidentId}/muster-point")]
@@ -170,6 +192,47 @@ namespace Haven.API.Controllers
             });
         }
 
-    }
+        [HttpGet("incidents/{incidentId}/muster-point/arrivals")]
+        public IActionResult GetMusterArrivals(string incidentId)
+        {
+            return Ok(Array.Empty<object>());
+        }
 
+        [HttpPost("incidents/{incidentId}/muster-point/arrivals/{userId}")]
+        public async Task<IActionResult> MarkArrived(string incidentId, string userId)
+        {
+            var incident = await _emergencyRepository.GetByIdAsync(incidentId);
+            if (incident == null) return NotFound("Incident not found");
+
+            var arrival = new
+            {
+                userId,
+                displayName = userId,
+                avatarUrl = (string?)null,
+                arrivedAt = DateTime.UtcNow,
+                isManualOverride = true,
+                incidentId,
+            };
+
+            // MemberArrivedAtMuster — matches frontend HubEvents.MemberArrivedAtMuster
+            await _emergencyHubContext.Clients.Group(incident.GroupId)
+                .SendAsync("MemberArrivedAtMuster", arrival);
+
+            return Ok(arrival);
+        }
+
+        [HttpPost("incidents/{incidentId}/muster-point/resolve")]
+        public async Task<IActionResult> ResolveMusterPoint(string incidentId)
+        {
+            var incident = await _emergencyRepository.GetByIdAsync(incidentId);
+            if (incident == null) return NotFound("Incident not found");
+
+            await _musterPointRepository.ResolveMusterPointAsync(incidentId);
+
+            await _emergencyHubContext.Clients.Group(incident.GroupId)
+                .SendAsync("MusterPointResolved", new { incidentId });
+
+            return Ok(new { Message = "Muster point resolved." });
+        }
+    }
 }

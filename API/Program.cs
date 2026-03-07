@@ -37,8 +37,6 @@ builder.Services.AddSwaggerGen(c =>
         Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey,
         Scheme = "Bearer"
     });
-    // If you have a SecurityRequirementsOperationFilter, add it here
-    // c.OperationFilter<SecurityRequirementsOperationFilter>();
     c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
     {
         {
@@ -81,7 +79,6 @@ builder.Services.AddSingleton<Haven.Infrastructure.IMusterPointRepository>(sp =>
         ? new Haven.Infrastructure.PostgresMusterPointRepository(groupConnStr)
         : new Haven.Infrastructure.InMemoryMusterPointRepository());
 var userConnStr = builder.Configuration.GetConnectionString("PostgresUsers") ?? string.Empty;
-var roleConnStr = builder.Configuration.GetConnectionString("PostgresRoles") ?? string.Empty;
 builder.Services.AddSingleton<Haven.Infrastructure.IUserRepository>(sp => new Haven.Infrastructure.PostgresUserRepository(userConnStr));
 builder.Services.AddSingleton<Haven.Application.IGroupService, Haven.Application.GroupService>();
 builder.Services.AddSingleton<Haven.Application.IUserService>(sp =>
@@ -112,37 +109,21 @@ builder.Services.AddAuthentication(options =>
     };
     options.Events = new JwtBearerEvents
     {
+        // SignalR clients pass the JWT via query string for WebSocket connections
         OnMessageReceived = context =>
         {
-            Console.WriteLine("Message received. Checking for token in Authorization header.");
-            var authHeader = context.Request.Headers["Authorization"].FirstOrDefault();
-            if (string.IsNullOrEmpty(authHeader))
+            var accessToken = context.Request.Query["access_token"];
+            var path = context.HttpContext.Request.Path;
+            if (!string.IsNullOrEmpty(accessToken) &&
+                (path.StartsWithSegments("/hubs") || path.StartsWithSegments("/locationHub")))
             {
-                Console.WriteLine("No Authorization header found.");
-            }
-            else
-            {
-                Console.WriteLine($"Authorization header found: {authHeader}");
+                context.Token = accessToken;
             }
             return Task.CompletedTask;
         },
         OnAuthenticationFailed = context =>
         {
             Console.WriteLine("Authentication failed: " + context.Exception.Message);
-            return Task.CompletedTask;
-        },
-        OnTokenValidated = context =>
-        {
-            Console.WriteLine("Token validated successfully. Claims: ");
-            foreach (var claim in context.Principal.Claims)
-            {
-                Console.WriteLine($"{claim.Type}: {claim.Value}");
-            }
-            return Task.CompletedTask;
-        },
-        OnChallenge = context =>
-        {
-            Console.WriteLine("Authentication challenge issued. Reason: " + context.ErrorDescription);
             return Task.CompletedTask;
         }
     };
@@ -168,7 +149,17 @@ app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Haven API v
 app.MapGet("/", () => Results.Ok(new { service = "Haven API", status = "running", docs = "/swagger" }));
 app.MapGet("/health", () => Results.Ok(new { status = "healthy" }));
 
+// ─── SignalR Hubs ─────────────────────────────────────────────────────────────
+// Primary routes (used by web + mobile clients)
+app.MapHub<Haven.API.Hubs.LocationHub>("/hubs/location");
+app.MapHub<Haven.API.Hubs.GroupHub>("/hubs/group");
+app.MapHub<Haven.API.Hubs.GeofenceHub>("/hubs/geofence");
+app.MapHub<Haven.API.Hubs.NotificationHub>("/hubs/notification");
+app.MapHub<Haven.API.Hubs.EmergencyHub>("/hubs/emergency");
+
+// Legacy route alias kept for backwards compatibility
 app.MapHub<Haven.API.Hubs.LocationHub>("/locationHub");
+
 app.MapControllers();
 
 app.Run();

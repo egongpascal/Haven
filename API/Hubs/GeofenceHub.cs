@@ -3,11 +3,8 @@ using System.Threading.Tasks;
 
 namespace Haven.API.Hubs
 {
-    public class EmergencyHub : Hub
+    public class GeofenceHub : Hub
     {
-        // Emergency events are broadcast from EmergencyController via IHubContext<EmergencyHub>.
-        // Clients invoke JoinGroup/LeaveGroup to receive group-scoped emergency events.
-
         public async Task JoinGroup(string groupId)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, groupId);
